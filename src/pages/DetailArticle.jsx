@@ -87,7 +87,7 @@ const DetailArticle = () => {
                   <ul key={comment.id} className="list-group">
                     <li className="list-group-item">
                       <p>{comment.commentBody}</p>
-                      <p className="text-primary">{comment.username}</p>
+                      <p className="text-primary fw-bold">{comment.username}</p>
                     </li>
                   </ul>
                 );

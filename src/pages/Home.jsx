@@ -27,7 +27,7 @@ const HomeComponent = () => {
             </button>
           </div>
         </div>
-        <div className="overflow-hidden" style={{ "max-height": "30vh" }}>
+        <div className="overflow-hidden" style={{ "maxHeight": "30vh" }}>
           <div className="container px-5">
             <img
               src="https://i.ibb.co.com/MnPN2H8/Logo-X-Transparent-White.png"

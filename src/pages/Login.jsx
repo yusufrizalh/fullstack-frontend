@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../helpers/AuthContext";
 
 const LoginComponent = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { setAuthState } = useContext(AuthContext);
 
   const handleLogin = () => {
     const data = { username: username, password: password };
@@ -35,6 +39,12 @@ const LoginComponent = () => {
           theme: "dark",
         });
         localStorage.setItem("accessToken", response.data.accessToken);
+        setAuthState({
+          id: response.data.id,
+          username: response.data.username,
+          status: true,
+        });
+        navigate("/"); //* redirect to dashboard
       }
     });
   };
