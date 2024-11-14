@@ -4,7 +4,7 @@ const RegisterComponent = () => {
       <div className="row">
         <div className="col-md-6">
           <div className="card shadow">
-            <div className="card-header bg-primary text-white h3 fw-bold">
+            <div className="card-header bg-primary text-white h5 fw-bold">
               Register
             </div>
             <div className="card-body">

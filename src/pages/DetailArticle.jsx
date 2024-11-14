@@ -27,15 +27,31 @@ const DetailArticle = () => {
   const addNewComment = () => {
     const apiUrlAddComment = "http://127.0.0.1:8001/comments";
     axios
-      .post(apiUrlAddComment, {
-        ArticleId: id,
-        commentBody: newComment,
-      })
+      .post(
+        apiUrlAddComment,
+        {
+          ArticleId: id,
+          commentBody: newComment,
+        },
+        {
+          headers: {
+            accessToken: localStorage.getItem("accessToken"),
+          },
+        }
+      )
       .then((response) => {
-        const commentToAdded = { commentBody: newComment };
-        console.log("RESPONSE: ", response);
-        toast("Successfully added comment");
-        setComments([...comments, commentToAdded]);
+        if (response.data.error) {
+          toast.error(response.data.error);
+        } else {
+          const commentToAdded = {
+            commentBody: newComment,
+            username: response.data.username,
+          };
+          setComments([...comments, commentToAdded]);
+          console.log("RESPONSE: ", response);
+          toast.success(response.data.message);
+          setNewComment("");
+        }
       });
   };
 
@@ -69,7 +85,10 @@ const DetailArticle = () => {
               {comments.map((comment) => {
                 return (
                   <ul key={comment.id} className="list-group">
-                    <li className="list-group-item">{comment.commentBody}</li>
+                    <li className="list-group-item">
+                      <p>{comment.commentBody}</p>
+                      <p className="text-primary">{comment.username}</p>
+                    </li>
                   </ul>
                 );
               })}

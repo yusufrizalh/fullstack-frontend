@@ -58,15 +58,31 @@ const NavbarComponent = () => {
                 </li>
               </ul>
               <ul className="navbar-nav mb-2 mb-lg-0">
-                <li className="nav-item">
-                  <Link to="/register" className="nav-link">
-                    Register
+                <li className="nav-item dropdown">
+                  <Link
+                    className="nav-link dropdown-toggle"
+                    to="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    User Area
                   </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/login" className="nav-link">
-                    Login
-                  </Link>
+                  <ul className="dropdown-menu">
+                    <li className="nav-item">
+                      <Link to="/register" className="dropdown-item">
+                        Register
+                      </Link>
+                    </li>
+                    <li>
+                      <hr className="dropdown-divider" />
+                    </li>
+                    <li className="nav-item">
+                      <Link to="/login" className="dropdown-item">
+                        Login
+                      </Link>
+                    </li>
+                  </ul>
                 </li>
               </ul>
             </div>

@@ -3,7 +3,7 @@ const FooterComponent = () => {
     <section className="">
       <footer
         className="text-center text-white"
-        style={{ "background-color": "#0a4275" }}
+        style={{ "backgroundColor": "#0a4275" }}
       >
         <div className="container p-4 pb-0">
           <section className="">
@@ -21,7 +21,7 @@ const FooterComponent = () => {
 
         <div
           className="text-center p-3"
-          style={{ "background-color": "rgba(0, 0, 0, 0.2)" }}
+          style={{ "backgroundColor": "rgba(0, 0, 0, 0.2)" }}
         >
           © 2024 Copyright: &nbsp;
           <a className="fw-bold text-white text-decoration-none" href="https://inixindo.id">
