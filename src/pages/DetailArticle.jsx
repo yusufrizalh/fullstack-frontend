@@ -1,15 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AuthContext } from "../helpers/AuthContext";
 
 const DetailArticle = () => {
   const { id } = useParams();
   const [articleObj, setArticleObj] = useState({});
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const { authState } = useContext(AuthContext);
 
   useEffect(() => {
     const apiUrl = `http://127.0.0.1:8001/articles/byid/${id}`;
@@ -17,6 +19,7 @@ const DetailArticle = () => {
       console.log("RESPONSE: ", response);
       setArticleObj(response.data.data);
     });
+
     const apiUrlComments = `http://127.0.0.1:8001/comments/${id}`;
     axios.get(apiUrlComments).then((response) => {
       console.log("RESPONSE: ", response);
@@ -55,6 +58,21 @@ const DetailArticle = () => {
       });
   };
 
+  const deleteComment = (id) => {
+    const apiUrlDeleteComment = `http://localhost:8001/comments/${id}`;
+    axios
+      .delete(apiUrlDeleteComment, {
+        headers: { accessToken: localStorage.getItem("accessToken") },
+      })
+      .then(() => {
+        setComments(
+          comments.filter((value) => {
+            return value.id != id;
+          })
+        );
+      });
+  };
+
   return (
     <div className="container mt-5 py-3 px-3">
       <h3 className="fw-bold">Detail Article with ID : {id}</h3>
@@ -87,7 +105,21 @@ const DetailArticle = () => {
                   <ul key={comment.id} className="list-group">
                     <li className="list-group-item">
                       <p>{comment.commentBody}</p>
-                      <p className="text-primary fw-bold">{comment.username}</p>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <span className="text-primary fw-bold">
+                          {comment.username}
+                        </span>
+                        {authState.username == comment.username && (
+                          <Link
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => {
+                              deleteComment(comment.id);
+                            }}
+                          >
+                            Delete
+                          </Link>
+                        )}
+                      </div>
                     </li>
                   </ul>
                 );
