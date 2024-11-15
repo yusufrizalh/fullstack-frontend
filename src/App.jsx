@@ -15,7 +15,7 @@ import axios from "axios";
 import FooterComponent from "./layouts/Footer";
 import HomeComponent from "./pages/Home";
 import {
-  BrowserRouter as Router,
+  // BrowserRouter as Router,
   Routes,
   Route,
   Link,
@@ -39,8 +39,6 @@ function App() {
     status: false,
   });
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     const apiUrlAuth = "https://localhost:8001/auth/auth";
     axios
@@ -60,158 +58,168 @@ function App() {
       });
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    setAuthState({
-      id: 0,
-      username: "",
-      status: false,
-    });
-    navigate("/");
-  };
+  const navigate = useNavigate();
+  // const handleLogout = () => {
+  //   localStorage.removeItem("accessToken");
+  //   setAuthState({
+  //     id: 0,
+  //     username: "",
+  //     status: false,
+  //   });
+
+  //   return navigate("/login");
+  // };
 
   return (
     <div>
       <AuthContext.Provider value={{ authState, setAuthState }}>
-        <Router>
-          <div className="container-fluid">
-            <nav
-              className="navbar navbar-expand-lg fixed-top"
-              data-bs-theme="dark"
-              style={{ backgroundColor: "#0a4275" }}
-            >
-              <div className="container">
-                <Link className="navbar-brand" to="https://inixindo.id">
-                  <img
-                    src="https://i.ibb.co.com/MnPN2H8/Logo-X-Transparent-White.png"
-                    alt="Logo-X"
-                    width="30"
-                    height="30"
-                    className="d-inline-block align-text-top me-3"
-                  />
-                  My React App
-                </Link>
-                <button
-                  className="navbar-toggler"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#navbarSupportedContent"
-                  aria-controls="navbarSupportedContent"
-                  aria-expanded="false"
-                  aria-label="Toggle navigation"
-                >
-                  <span className="navbar-toggler-icon"></span>
-                </button>
-                <div
-                  className="collapse navbar-collapse"
-                  id="navbarSupportedContent"
-                >
-                  <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+        {/* <Router> */}
+        <div className="container-fluid">
+          <nav
+            className="navbar navbar-expand-lg fixed-top"
+            data-bs-theme="dark"
+            style={{ backgroundColor: "#0a4275" }}
+          >
+            <div className="container">
+              <Link className="navbar-brand" to="https://inixindo.id">
+                <img
+                  src="https://i.ibb.co.com/MnPN2H8/Logo-X-Transparent-White.png"
+                  alt="Logo-X"
+                  width="30"
+                  height="30"
+                  className="d-inline-block align-text-top me-3"
+                />
+                My React App
+              </Link>
+              <button
+                className="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation"
+              >
+                <span className="navbar-toggler-icon"></span>
+              </button>
+              <div
+                className="collapse navbar-collapse"
+                id="navbarSupportedContent"
+              >
+                <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li className="nav-item">
+                    <Link to="/" className="nav-link">
+                      Home
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/about">
+                      About
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/contact">
+                      Contact
+                    </Link>
+                  </li>
+                  {authState.status ? (
                     <li className="nav-item">
-                      <Link to="/" className="nav-link">
-                        Home
+                      <Link className="nav-link" to="/articles">
+                        Articles
                       </Link>
                     </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/about">
-                        About
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/contact">
-                        Contact
-                      </Link>
-                    </li>
-                    {authState.status ? (
-                      <li className="nav-item">
-                        <Link className="nav-link" to="/articles">
-                          Articles
-                        </Link>
-                      </li>
-                    ) : (
-                      <li className="nav-item"></li>
-                    )}
-                  </ul>
-                  {!authState.status ? (
-                    <ul className="navbar-nav mb-2 mb-lg-0">
-                      <li className="nav-item dropdown">
-                        <Link
-                          className="nav-link dropdown-toggle"
-                          to="#"
-                          role="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        >
-                          User Area
-                        </Link>
-                        <ul className="dropdown-menu">
-                          <li className="nav-item">
-                            <Link to="/register" className="dropdown-item">
-                              Register
-                            </Link>
-                          </li>
-                          <li>
-                            <hr className="dropdown-divider" />
-                          </li>
-                          <li className="nav-item">
-                            <Link to="/login" className="dropdown-item">
-                              Login
-                            </Link>
-                          </li>
-                        </ul>
-                      </li>
-                    </ul>
                   ) : (
-                    <ul className="navbar-nav mb-2 mb-lg-0">
-                      <li className="nav-item dropdown">
-                        <Link
-                          className="nav-link dropdown-toggle"
-                          to="#"
-                          role="button"
-                          data-bs-toggle="dropdown"
-                          aria-expanded="false"
-                        >
-                          {authState.username}
-                        </Link>
-                        <ul className="dropdown-menu">
-                          <li className="nav-item">
-                            <Link to="/profile" className="dropdown-item">
-                              Profile
-                            </Link>
-                          </li>
-                          <li>
-                            <hr className="dropdown-divider" />
-                          </li>
-                          <li className="nav-item">
-                            <Link
-                              onClick={handleLogout}
-                              className="dropdown-item"
-                            >
-                              Logout
-                            </Link>
-                          </li>
-                        </ul>
-                      </li>
-                    </ul>
+                    <li className="nav-item"></li>
                   )}
-                </div>
+                </ul>
+                {!authState.status ? (
+                  <ul className="navbar-nav mb-2 mb-lg-0">
+                    <li className="nav-item dropdown">
+                      <Link
+                        className="nav-link dropdown-toggle"
+                        to="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        User Area
+                      </Link>
+                      <ul className="dropdown-menu">
+                        <li className="nav-item">
+                          <Link to="/register" className="dropdown-item">
+                            Register
+                          </Link>
+                        </li>
+                        <li>
+                          <hr className="dropdown-divider" />
+                        </li>
+                        <li className="nav-item">
+                          <Link to="/login" className="dropdown-item">
+                            Login
+                          </Link>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                ) : (
+                  <ul className="navbar-nav mb-2 mb-lg-0">
+                    <li className="nav-item dropdown">
+                      <Link
+                        className="nav-link dropdown-toggle"
+                        to="#"
+                        role="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        {authState.username}
+                      </Link>
+                      <ul className="dropdown-menu">
+                        <li className="nav-item">
+                          <Link to="/profile" className="dropdown-item">
+                            Profile
+                          </Link>
+                        </li>
+                        <li>
+                          <hr className="dropdown-divider" />
+                        </li>
+                        <li className="nav-item">
+                          <button
+                            onClick={() => {
+                              localStorage.removeItem("accessToken");
+                              setAuthState({
+                                id: 0,
+                                username: "",
+                                status: false,
+                              });
+                              navigate("/login");
+                            }}
+                            className="dropdown-item"
+                          >
+                            Logout
+                          </button>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                )}
               </div>
-            </nav>
-            ;
-          </div>
-          <Routes>
-            <Route path="/" element={<HomeComponent />}></Route>
-            <Route path="/about" element={<AboutComponent />}></Route>
-            <Route path="/contact" element={<ContactComponent />}></Route>
-            <Route path="/articles" element={<ArticlesComponent />}></Route>
-            <Route path="/createarticle" element={<CreateArticle />}></Route>
-            <Route path="/article/:id" element={<DetailArticle />}></Route>
-            <Route path="/login" element={<LoginComponent />}></Route>
-            <Route path="/register" element={<RegisterComponent />}></Route>
-            <Route path="*" element={<NotFound />}></Route>
-          </Routes>
-          <FooterComponent />
-        </Router>
+            </div>
+          </nav>
+          ;
+        </div>
+        <Routes>
+          <Route path="/" element={<HomeComponent />}></Route>
+          <Route path="/about" element={<AboutComponent />}></Route>
+          <Route path="/contact" element={<ContactComponent />}></Route>
+          <Route path="/articles" element={<ArticlesComponent />}></Route>
+          <Route path="/createarticle" element={<CreateArticle />}></Route>
+          <Route path="/article/:id" element={<DetailArticle />}></Route>
+          <Route path="/login" element={<LoginComponent />}></Route>
+          <Route path="/register" element={<RegisterComponent />}></Route>
+          <Route path="*" element={<NotFound />}></Route>
+        </Routes>
+        <FooterComponent />
+        {/* </Router> */}
       </AuthContext.Provider>
     </div>
   );
