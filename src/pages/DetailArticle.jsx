@@ -5,31 +5,36 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../helpers/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const DetailArticle = () => {
   const { id } = useParams();
   const [articleObj, setArticleObj] = useState([]);
-
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const { authState } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const apiUrl = `http://127.0.0.1:8001/articles/byid/${id}`;
-    axios
-      .get(apiUrl, {
-        headers: { accessToken: localStorage.getItem("accessToken") },
-      })
-      .then((response) => {
-        console.log("RESPONSE: ", response);
-        setArticleObj(response.data.data);
-      });
+    if (!localStorage.getItem("accessToken")) {
+      navigate("/login");
+    } else {
+      const apiUrl = `http://127.0.0.1:8001/articles/byid/${id}`;
+      axios
+        .get(apiUrl, {
+          headers: { accessToken: localStorage.getItem("accessToken") },
+        })
+        .then((response) => {
+          console.log("RESPONSE: ", response);
+          setArticleObj(response.data.data);
+        });
 
-    const apiUrlComments = `http://127.0.0.1:8001/comments/${id}`;
-    axios.get(apiUrlComments).then((response) => {
-      console.log("RESPONSE: ", response);
-      setComments(response.data.data);
-    });
+      const apiUrlComments = `http://127.0.0.1:8001/comments/${id}`;
+      axios.get(apiUrlComments).then((response) => {
+        console.log("RESPONSE: ", response);
+        setComments(response.data.data);
+      });
+    }
   }, []); //* []: rendered on time only
 
   const addNewComment = () => {

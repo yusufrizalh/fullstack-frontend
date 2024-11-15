@@ -1,10 +1,21 @@
+import { useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const CreateArticle = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!localStorage.getItem("accessToken")) {
+      navigate("/login");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const initialValues = {
     title: "Default Title",
     articleBody: "Default article content",
@@ -13,10 +24,16 @@ const CreateArticle = () => {
 
   const handleOnSubmitFormik = (data) => {
     const apiUrl = "http://127.0.0.1:8001/articles";
-    axios.post(apiUrl, data).then((response) => {
-      console.log("Data created successfully: ", response);
-      toast("Data created successfully!");
-    });
+    axios
+      .post(apiUrl, data, {
+        headers: {
+          accessToken: localStorage.getItem("accessToken"),
+        },
+      })
+      .then((response) => {
+        console.log("Data created successfully: ", response);
+        toast("Data created successfully!");
+      });
   };
 
   const validationSchema = Yup.object().shape({

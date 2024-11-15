@@ -30,6 +30,7 @@ import RegisterComponent from "./pages/Register";
 import { AuthContext } from "./helpers/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const [authState, setAuthState] = useState({
@@ -37,6 +38,8 @@ function App() {
     username: "",
     status: false,
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const apiUrlAuth = "https://localhost:8001/auth/auth";
@@ -64,6 +67,7 @@ function App() {
       username: "",
       status: false,
     });
+    navigate("/");
   };
 
   return (
@@ -118,11 +122,15 @@ function App() {
                         Contact
                       </Link>
                     </li>
-                    <li className="nav-item">
-                      <Link className="nav-link" to="/articles">
-                        Articles
-                      </Link>
-                    </li>
+                    {authState.status ? (
+                      <li className="nav-item">
+                        <Link className="nav-link" to="/articles">
+                          Articles
+                        </Link>
+                      </li>
+                    ) : (
+                      <li className="nav-item"></li>
+                    )}
                   </ul>
                   {!authState.status ? (
                     <ul className="navbar-nav mb-2 mb-lg-0">
@@ -200,6 +208,7 @@ function App() {
             <Route path="/article/:id" element={<DetailArticle />}></Route>
             <Route path="/login" element={<LoginComponent />}></Route>
             <Route path="/register" element={<RegisterComponent />}></Route>
+            <Route path="*" element={<NotFound />}></Route>
           </Routes>
           <FooterComponent />
         </Router>
@@ -236,21 +245,25 @@ export const ArticlesComponent = () => {
   const [likedArticle, setLikedArticle] = useState([]);
 
   useEffect(() => {
-    const apiUrl = "http://127.0.0.1:8001/articles";
-    axios
-      .get(apiUrl, {
-        headers: { accessToken: localStorage.getItem("accessToken") },
-      })
-      .then((response) => {
-        console.log("RESPONSE: ", response);
-        setArticles(response.data.data);
-        setFilteredArticles(response.data.data);
-        setLikedArticle(
-          response.data.likedArticle.map((liked) => {
-            return liked.ArticleId; //* read liked on article by ArticleId
-          })
-        );
-      });
+    if (!localStorage.getItem("accessToken")) {
+      navigate("/login");
+    } else {
+      const apiUrl = "http://127.0.0.1:8001/articles";
+      axios
+        .get(apiUrl, {
+          headers: { accessToken: localStorage.getItem("accessToken") },
+        })
+        .then((response) => {
+          console.log("RESPONSE: ", response);
+          setArticles(response.data.data);
+          setFilteredArticles(response.data.data);
+          setLikedArticle(
+            response.data.likedArticle.map((liked) => {
+              return liked.ArticleId; //* read liked on article by ArticleId
+            })
+          );
+        });
+    }
   }, []); //* []: only rendered one time
 
   const handleSearchInput = (event) => {
