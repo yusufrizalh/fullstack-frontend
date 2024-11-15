@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /*
  * React components bisa dibuat dalam 2 cara:
  * 1> Class Component
@@ -27,6 +28,8 @@ import DetailArticle from "./pages/DetailArticle";
 import LoginComponent from "./pages/Login";
 import RegisterComponent from "./pages/Register";
 import { AuthContext } from "./helpers/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [authState, setAuthState] = useState({
@@ -230,14 +233,24 @@ export const ArticlesComponent = () => {
   const [searchItem, setSearchItem] = useState("");
   const [filteredArticles, setFilteredArticles] = useState([]);
   const navigate = useNavigate();
+  const [likedArticle, setLikedArticle] = useState([]);
 
   useEffect(() => {
     const apiUrl = "http://127.0.0.1:8001/articles";
-    axios.get(apiUrl).then((response) => {
-      console.log("RESPONSE: ", response);
-      setArticles(response.data.data);
-      setFilteredArticles(response.data.data);
-    });
+    axios
+      .get(apiUrl, {
+        headers: { accessToken: localStorage.getItem("accessToken") },
+      })
+      .then((response) => {
+        console.log("RESPONSE: ", response);
+        setArticles(response.data.data);
+        setFilteredArticles(response.data.data);
+        setLikedArticle(
+          response.data.likedArticle.map((liked) => {
+            return liked.ArticleId; //* read liked on article by ArticleId
+          })
+        );
+      });
   }, []); //* []: only rendered one time
 
   const handleSearchInput = (event) => {
@@ -251,8 +264,63 @@ export const ArticlesComponent = () => {
     setFilteredArticles(filteredItems);
   };
 
+  const addLikeArticle = (articleId) => {
+    const apiUrlLikeArticle = "http://localhost:8001/likes";
+    axios
+      .post(
+        apiUrlLikeArticle,
+        {
+          ArticleId: articleId,
+        },
+        { headers: { accessToken: localStorage.getItem("accessToken") } }
+      )
+      .then((response) => {
+        setArticles(
+          articles.map((article) => {
+            if (article.id === articleId) {
+              if (response.data.liked) {
+                return { ...article, Likes: [...article.Likes, 0] };
+              } else {
+                const likesArray = article.Likes;
+                likesArray.pop();
+                return { ...article, Likes: likesArray };
+              }
+            } else {
+              return article; //* total likes on article
+            }
+          })
+        );
+
+        //* detect liked on article
+        if (likedArticle.includes(articleId)) {
+          setLikedArticle(
+            likedArticle.filter((id) => {
+              return id != articleId;
+            })
+          );
+        } else {
+          setLikedArticle([...likedArticle, articleId]);
+        }
+
+        toast.success(response.data.message);
+      });
+  };
+
   return (
     <div className="container py-5 px-3 mt-3">
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        transition:Bounce
+      />
       <div className="d-flex justify-content-between align-items-center">
         <span className="h1 fw-bold">All Articles</span>
         <Link
@@ -286,10 +354,7 @@ export const ArticlesComponent = () => {
               filteredArticles.map((article) => {
                 return (
                   <div className="col-md-4" key={article.id}>
-                    <div
-                      className="card shadow mb-4"
-                      onClick={() => navigate(`/article/${article.id}`)}
-                    >
+                    <div className="card shadow mb-4">
                       <div
                         className="card-header text-white fw-bold"
                         style={{ backgroundColor: "#0a4275" }}
@@ -299,15 +364,34 @@ export const ArticlesComponent = () => {
                           <span>[{article.id}]</span>
                         </div>
                       </div>
-                      <div className="card-body">
+                      <div
+                        className="card-body"
+                        onClick={() => navigate(`/article/${article.id}`)}
+                      >
                         <p className="card-text">{article.articleBody}</p>
                       </div>
                       <div
-                        className="card-footer text-white"
+                        className="card-footer text-white d-flex justify-content-between align-items-center"
                         style={{ backgroundColor: "#0a4275" }}
                       >
-                        Written by{" "}
-                        <span className="fw-bold">{article.username}</span>
+                        <span className="fw-bold">by {article.username}</span>
+                        <input
+                          type="text"
+                          readOnly
+                          onClick={() => {
+                            addLikeArticle(article.id);
+                          }}
+                          className="btn btn-sm btn-outline-light"
+                          style={{ width: "60px" }}
+                          value={
+                            likedArticle.includes(article.id)
+                              ? "Unlike"
+                              : "Like"
+                          }
+                        />
+                        <span className="text-white fw-bold">
+                          {article.Likes.length}
+                        </span>
                       </div>
                     </div>
                   </div>

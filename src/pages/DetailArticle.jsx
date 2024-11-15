@@ -8,17 +8,22 @@ import { AuthContext } from "../helpers/AuthContext";
 
 const DetailArticle = () => {
   const { id } = useParams();
-  const [articleObj, setArticleObj] = useState({});
+  const [articleObj, setArticleObj] = useState([]);
+
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const { authState } = useContext(AuthContext);
 
   useEffect(() => {
     const apiUrl = `http://127.0.0.1:8001/articles/byid/${id}`;
-    axios.get(apiUrl).then((response) => {
-      console.log("RESPONSE: ", response);
-      setArticleObj(response.data.data);
-    });
+    axios
+      .get(apiUrl, {
+        headers: { accessToken: localStorage.getItem("accessToken") },
+      })
+      .then((response) => {
+        console.log("RESPONSE: ", response);
+        setArticleObj(response.data.data);
+      });
 
     const apiUrlComments = `http://127.0.0.1:8001/comments/${id}`;
     axios.get(apiUrlComments).then((response) => {
@@ -87,8 +92,10 @@ const DetailArticle = () => {
               <p className="card-text">{articleObj.articleBody}</p>
             </div>
             `
-            <div className="card-footer bg-primary text-white">
-              Written by <span className="fw-bold">{articleObj.username}</span>
+            <div className="card-footer bg-primary">
+              <span className="fw-bold text-white">
+                Written by {articleObj.username}
+              </span>
             </div>
           </div>
         </div>
